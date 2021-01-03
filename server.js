@@ -6,6 +6,8 @@ const cors = require("cors");
 
 const users = require("./routes/api/users");
 const messages = require("./routes/api/messages");
+const stockBot = require("./routes/api/stock-bot");
+const {startStockQuotesWorker} = require('./services/stock-bot')
 
 const app = express();
 
@@ -52,6 +54,10 @@ app.use(function (req, res, next) {
   next();
 });
 
+// Workers
+startStockQuotesWorker(io)
+
 // Routes
 app.use("/api/users", users);
 app.use("/api/messages", messages);
+app.use("/api/stock-bot", stockBot);

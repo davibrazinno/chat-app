@@ -27,6 +27,31 @@ export function useGetGlobalMessages() {
     return getGlobalMessages;
 }
 
+// Receive bot messages
+export function useGetBotMessages() {
+    const { enqueueSnackbar } = useSnackbar();
+    const handleResponse = useHandleResponse();
+    const requestOptions = {
+        method: 'GET',
+        headers: authHeader(),
+    };
+
+    const getBotMessages = () => {
+        return fetch(
+            `${process.env.REACT_APP_API_URL}/api/stock-bot`,
+            requestOptions
+        )
+            .then(handleResponse)
+            .catch(() =>
+                enqueueSnackbar('Could not load Bot Messages', {
+                    variant: 'error',
+                })
+            );
+    };
+
+    return getBotMessages;
+}
+
 // Send a global message
 export function useSendGlobalMessage() {
     const { enqueueSnackbar } = useSnackbar();
@@ -53,6 +78,34 @@ export function useSendGlobalMessage() {
     };
 
     return sendGlobalMessage;
+}
+
+// Send a stock bot message
+export function useSendStockBotMessage() {
+    const { enqueueSnackbar } = useSnackbar();
+    const handleResponse = useHandleResponse();
+
+    const sendStockBotMessage = (params) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: authHeader(),
+            body: JSON.stringify(params),
+        };
+
+        return fetch(
+            `${process.env.REACT_APP_API_URL}/api/stock-bot`,
+            requestOptions
+        )
+            .then(handleResponse)
+            .catch(err => {
+                console.log(err);
+                enqueueSnackbar('Could send message', {
+                    variant: 'error',
+                });
+            });
+    };
+
+    return sendStockBotMessage;
 }
 
 // Get list of users conversations

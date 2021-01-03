@@ -9,9 +9,11 @@ const Message = require('../../models/Message');
 const Conversation = require('../../models/Conversation');
 const GlobalMessage = require('../../models/GlobalMessage');
 
+const MAX_RESULTS = 50
+
 let jwtUser = null;
 
-// Token verfication middleware
+// Token verification middleware
 router.use(function(req, res, next) {
     try {
         jwtUser = jwt.verify(verify(req), keys.secretOrKey);
@@ -36,6 +38,8 @@ router.get('/global', (req, res) => {
             },
         },
     ])
+        .sort({'date': -1})
+        .limit(MAX_RESULTS)
         .project({
             'fromObj.password': 0,
             'fromObj.__v': 0,
@@ -54,7 +58,7 @@ router.get('/global', (req, res) => {
 });
 
 // Post global message
-router.post('/global', (req, res) => {
+router.post('/global', async (req, res) => {
     let message = new GlobalMessage({
         from: jwtUser.id,
         body: req.body.body,
@@ -77,33 +81,42 @@ router.post('/global', (req, res) => {
 
 // Get conversations list
 router.get('/conversations', (req, res) => {
-    let from = mongoose.Types.ObjectId(jwtUser.id);
-    Conversation.aggregate([
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'recipients',
-                foreignField: '_id',
-                as: 'recipientObj',
+    try {
+        let from = mongoose.Types.ObjectId(jwtUser.id);
+        Conversation.aggregate([
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'recipients',
+                    foreignField: '_id',
+                    as: 'recipientObj',
+                },
             },
-        },
-    ])
-        .match({ recipients: { $all: [{ $elemMatch: { $eq: from } }] } })
-        .project({
-            'recipientObj.password': 0,
-            'recipientObj.__v': 0,
-            'recipientObj.date': 0,
-        })
-        .exec((err, conversations) => {
-            if (err) {
-                console.log(err);
-                res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify({ message: 'Failure' }));
-                res.sendStatus(500);
-            } else {
-                res.send(conversations);
-            }
-        });
+        ])
+            .sort({'date': -1})
+            .limit(MAX_RESULTS)
+            .match({ recipients: { $all: [{ $elemMatch: { $eq: from } }] } })
+            .project({
+                'recipientObj.password': 0,
+                'recipientObj.__v': 0,
+                'recipientObj.date': 0,
+            })
+            .exec((err, conversations) => {
+                if (err) {
+                    console.log(err);
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ message: 'Failure' }));
+                    res.sendStatus(500);
+                } else {
+                    res.send(conversations);
+                }
+            });
+    } catch (err) {
+        console.log(err);
+        res.setHeader("Content-Type", "application/json");
+        res.end(JSON.stringify({ message: "Unauthorized" }));
+        res.sendStatus(401);
+    }
 });
 
 // Get messages from conversation
@@ -129,6 +142,8 @@ router.get('/conversations/query', (req, res) => {
             },
         },
     ])
+        .sort({'date': -1})
+        .limit(MAX_RESULTS)
         .match({
             $or: [
                 { $and: [{ to: user1 }, { from: user2 }] },

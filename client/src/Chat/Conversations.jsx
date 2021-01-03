@@ -9,7 +9,7 @@ import Divider from "@material-ui/core/Divider";
 import { makeStyles } from "@material-ui/core/styles";
 import socketIOClient from "socket.io-client";
 
-import { useGetConversations } from "../Services/chatService";
+import {useGetConversations} from "../Services/chatService";
 import { authenticationService } from "../Services/authenticationService";
 import commonUtilites from "../Utilities/common";
 
@@ -42,8 +42,7 @@ const Conversations = (props) => {
   const handleRecipient = (recipients) => {
     for (let i = 0; i < recipients.length; i++) {
       if (
-        recipients[i].username !==
-        authenticationService.currentUserValue.username
+        recipients[i].username !== authenticationService.currentUserValue.username
       ) {
         return recipients[i];
       }
@@ -52,8 +51,10 @@ const Conversations = (props) => {
   };
 
   useEffect(() => {
-    getConversations().then((res) => setConversations(res));
-  }, [newConversation]);
+    getConversations().then((res) => {
+      setConversations(res)
+    });
+  }, [newConversation])
 
   useEffect(() => {
     let socket = socketIOClient(process.env.REACT_APP_API_URL);

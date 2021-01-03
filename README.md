@@ -1,4 +1,9 @@
-# MERN: Full-stack Chat Application
+# MERN: Full-stack Chat Application with Stock Market Bot
+
+```
+docker run -p 5672:5672 -d --hostname localhost --name chat-app-rabbit rabbitmq:3
+docker run  -p 27017:27017 --name char-app-mongo -d mongo
+```
 
 #### Introduction
 
