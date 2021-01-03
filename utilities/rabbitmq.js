@@ -1,4 +1,4 @@
-import {rabbitURI} from '../config/keys'
+const {rabbitURI} = require('../config/keys')
 
 function connect(){
     return require('amqplib').connect(rabbitURI)
