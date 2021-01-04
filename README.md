@@ -1,5 +1,35 @@
 # MERN: Full-stack Chat Application with Stock Market Bot
 
+This project implements a MERN Char App with a Stock Market Bot. The bot is called by typing `/stock=googl.us` command from any chat, where `googl.us` is the stock option, and returns a message in the same chat exclusively for the user who sent the request. The backend processes the bot requests asynchronously, each request is sent to a message broker (RabbitMQ) and when it's processed the backend send a message using Socket.IO in order to update the chat with the Stock Bot response.
+
+### How to use
+
+Dependencies:
+1. MongoDB running on port 27017
+2. RabbitMQ running on port 6572
+
+A Docker compose file is included for both dependencies, from the root dir run:
+```
+docker-compose up
+```
+
+To Install & Run the Backend, from /server dir run:
+```
+npm install
+npm run server
+```
+
+To Install & Run the Frontend, from /client dir run:
+```
+npm install
+npm start
+```
+
+---
+
+Note:This project was bootstrapped from [chat-app](https://github.com/davehowson/chat-app) and updated to support the Stock Bot. The sections below are almost the same from the Chat App, expect by the updated Global Chat screenshot.
+
+---
 
 #### Introduction
 
@@ -35,21 +65,4 @@ This application provides users with the following features
 <br/><br/>
 ##### Register
 ![Register](https://i.imgur.com/AMkpl9C.png)
-
-### How to use
-
-You can have this application up and running with just a few steps because it has both the frontend and the backend in a single repository. Follow the steps below to do so.
-
-1. Clone this repo
-2. Once you have the repo, you need to install its dependencies. So using a terminal, move into the root directory of the project and execute `npm install` to install the dependencies of the Node.js server and then run `npm run client-install` to install the dependencies of the frontend. The second command is a custom command that I wrote to simplify the installation process.
-3. This application uses MongoDB as its Database. So make sure you have it installed. You can find detailed guides on how to do so [here](https://docs.mongodb.com/manual/administration/install-community/). Once installed, make sure that your local MongoDB server is not protected by any kind of authentication. If there is authentication involved, make sure you edit the `mongoURI` in the `config/keys.js` file.
-4. Finally, all you have to do is simply run `npm run dev`. If this command fails, try installing the package [concurrently](https://www.npmjs.com/package/concurrently) globally by running `npm install -g concurrently` and then running the `dev` command.
-5. The frontend of the application will be automatically opened in your web browser and you can test it away.
-
-
-### Things to note
-
-* The frontend is created using [create-react-app](https://github.com/facebook/create-react-app)
-* Database connections in the backend are handled using the [Mongoose ORM](https://mongoosejs.com/)
-* Code quality is ensured using (ESLint)[https://eslint.org/]
 
