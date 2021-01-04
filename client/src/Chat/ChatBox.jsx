@@ -109,7 +109,7 @@ const ChatBox = (props) => {
             setLastMessage(data)
         });
         const user = JSON.parse(localStorage.getItem('currentUser'))
-        if (user.userId) {
+        if (user?.userId) {
             socket.on(`bot-message-${user.userId}`, (data) => {
                 setLastMessage(data)
             });

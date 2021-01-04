@@ -84,6 +84,7 @@ router.post("/register", (req, res) => {
                       success: true,
                       token: "Bearer " + token,
                       name: user.name,
+                      userId: user._id
                     });
                   }
                 }
