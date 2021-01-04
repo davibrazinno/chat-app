@@ -49,10 +49,15 @@ app.use(passport.initialize());
 require("./config/passport")(passport);
 
 // Assign socket object to every request
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   req.io = io;
   next();
 });
+
+app.use((err, req, res, next) => {
+    console.log('ERROR', err)
+    res.status(501).json({error: err})
+})
 
 // Workers
 startStockQuotesWorker(io)
