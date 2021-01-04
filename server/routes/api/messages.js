@@ -62,7 +62,6 @@ router.get('/conversations/query', async (req, res, next) => {
 // Post private message
 router.post('/', async (req, res, next) => {
     try {
-        console.log('REQ', req.userId, req.body.to, req.body.body)
         const response = await addConversation(req.userId, req.body.to, req.body.body)
         req.io.sockets.emit('messages', req.body.body);
         res.send(response)
