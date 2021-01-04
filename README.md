@@ -1,9 +1,5 @@
 # MERN: Full-stack Chat Application with Stock Market Bot
 
-```
-docker run -p 5672:5672 -d --hostname localhost --name chat-app-rabbit rabbitmq:3
-docker run  -p 27017:27017 --name char-app-mongo -d mongo
-```
 
 #### Introduction
 
@@ -28,7 +24,8 @@ This application provides users with the following features
 #### Screenshots
 
 ##### Global Chat
-![Global Chat](https://i.imgur.com/VkdwAme.png)
+![Global Chat](https://user-images.githubusercontent.com/76712257/103496740-1009df80-4e1e-11eb-8347-18185a713dac.png)
+
 <br/><br/>
 ##### Private Chat
 ![Private Chat](https://i.imgur.com/jdCBYu4.png)
@@ -56,9 +53,3 @@ You can have this application up and running with just a few steps because it ha
 * Database connections in the backend are handled using the [Mongoose ORM](https://mongoosejs.com/)
 * Code quality is ensured using (ESLint)[https://eslint.org/]
 
-### Disclaimer
-
-This repository contains beginner level code and might contain some things I wish to change or remove. I have not maintained this for quite some time, but now I am trying to slowly fix these issues. You are welcome to open issues if you find any and I will accept PR's as well.
-<br/><br/>
-
-Cheers 💻 🍺 🔥 🙌
