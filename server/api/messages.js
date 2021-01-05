@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const jwtValidation = require('../../middleware/jwt-validation')
+const {jwtValidation} = require('../utilities/jwt-utils')
 const {
     getGlobalMessages,
     saveGlobalMessage,
     getConversations,
     getConversationsQuery,
     addConversation
-} = require('../../services/messages.service')
+} = require('./messages.service')
 
 
 // Token verification middleware

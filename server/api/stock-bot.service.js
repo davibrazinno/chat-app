@@ -1,7 +1,35 @@
+const mongoose = require('mongoose');
 const https = require('https');
 const csv = require('@fast-csv/parse');
 const {consume} = require('../utilities/rabbitmq');
-const BotMessage = require('../models/BotMessage')
+const BotMessage = require('../models/BotMessage');
+
+const getStockBotMessages = async (userId) => {
+    return new Promise((resolve, reject) => {
+        let user = mongoose.Types.ObjectId(userId);
+        return BotMessage.find({to: user})
+            .lean()
+            .sort({'date': -1})
+            .exec((err, botMessages) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    const messages = botMessages.map((botMessage) => {
+                        const msg = {
+                            ...botMessage,
+                            _id: botMessage.date,
+                            fromObj: [{_id: 'BOT', name: 'Stock Bot', username: 'stock-bot'}]
+                        }
+                        if (botMessage.fromConversation) {
+                            msg.toObj = [{_id: msg.to}]
+                        }
+                        return msg;
+                    })
+                    resolve(messages)
+                }
+            });
+    })
+};
 
 const startStockQuotesWorker = socket => {
     const queue = 'STOCK_QUOTES'
@@ -62,6 +90,7 @@ const getStockQuote = async stock => {
 }
 
 module.exports = {
-    getStockQuote,
-    startStockQuotesWorker
+    getStockBotMessages,
+    startStockQuotesWorker,
+    getStockQuote
 };

@@ -4,10 +4,10 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const cors = require("cors");
 
-const users = require("./routes/api/users");
-const messages = require("./routes/api/messages");
-const stockBot = require("./routes/api/stock-bot");
-const {startStockQuotesWorker} = require('./services/stock-bot')
+const users = require("./api/users");
+const messages = require("./api/messages");
+const stockBot = require("./api/stock-bot");
+const {startStockQuotesWorker} = require('./api/stock-bot.service')
 
 const app = express();
 
@@ -55,8 +55,7 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-    console.log('ERROR', err)
-    res.status(501).json({error: err})
+    res.status(500).json({error: err})
 })
 
 // Workers
