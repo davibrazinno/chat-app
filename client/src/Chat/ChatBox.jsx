@@ -152,6 +152,9 @@ const ChatBox = (props) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!newMessage || newMessage === '') {
+            return;
+        }
         if (newMessage.startsWith('/stock=')) {
             const stockOption = newMessage.match(/^\/stock=(\S+)/)[1]
             const request = {
