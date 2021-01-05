@@ -4,9 +4,9 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const cors = require("cors");
 
-const users = require("./api/users");
-const messages = require("./api/messages");
-const stockBot = require("./api/stock-bot");
+const users = require("./api/users.controller");
+const messages = require("./api/messages.controller");
+const stockBot = require("./api/stock-bot.controller");
 const {startStockQuotesWorker} = require('./api/stock-bot.service')
 
 const app = express();
@@ -65,3 +65,5 @@ startStockQuotesWorker(io)
 app.use("/api/users", users);
 app.use("/api/messages", messages);
 app.use("/api/stock-bot", stockBot);
+
+module.exports = app

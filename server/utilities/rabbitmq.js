@@ -1,7 +1,8 @@
 const {rabbitURI} = require('../config/keys')
+const ampq = require('amqplib')
 
 function connect(){
-    return require('amqplib').connect(rabbitURI)
+    return ampq.connect(rabbitURI)
         .then(conn => conn.createChannel());
 }
 

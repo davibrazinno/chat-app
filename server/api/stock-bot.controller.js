@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {jwtValidation} = require('../utilities/jwt-utils')
 const {getStockBotMessages} = require('./stock-bot.service')
-const {sendToQueue} = require('../utilities/rabbitmq')
+const rabbitmq = require('../utilities/rabbitmq')
 
 // Token verification middleware
 router.use(jwtValidation);
@@ -15,7 +15,7 @@ router.post('/', async (req, res, next) => {
         to: req.userId
     }
     try {
-        sendToQueue(queue, msg)
+        rabbitmq.sendToQueue(queue, msg)
         res.status(200).json({ message: 'Success' })
     } catch (err) {
         next(err);
