@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const {generateUserToken, decodeToken} = require('../utilities/jwt-utils');
-const {getUser, registerUser, loginUser} = require('./users.service');
+const {getUsersList, registerUser, loginUser} = require('./users.service');
 
 router.get("/", async (req, res) => {
   try {
     let jwtUser = decodeToken(req)
-    const user = await getUser(jwtUser.id)
+    const user = await getUsersList(jwtUser.id)
     res.status(200).json(user)
   } catch (err) {
     res.status(401).json({ message: "Unauthorized" })

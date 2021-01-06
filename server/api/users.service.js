@@ -8,6 +8,24 @@ const User = require("../models/User");
 const getUser = (userId) => {
   let id = mongoose.Types.ObjectId(userId);
   return new Promise((resolve, reject) => {
+    User.find({_id: {$eq: id}}, {
+      password: 0,
+      __v: 0,
+      date: 0,
+    })
+        .exec((err, users) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(users);
+          }
+        });
+  })
+}
+
+const getUsersList = (userId) => {
+  let id = mongoose.Types.ObjectId(userId);
+  return new Promise((resolve, reject) => {
     User.aggregate()
         .match({_id: {$not: {$eq: id}}})
         .project({
@@ -75,21 +93,23 @@ const loginUser = (userData) => {
       // Check if user exists
       if (!user) {
         reject({ usernamenotfound: "Username not found" });
+      } else {
+        // Check password
+        bcrypt.compare(password, user.password).then((isMatch) => {
+          if (isMatch) {
+            resolve(user);
+          } else {
+            reject({ passwordincorrect: "Password incorrect" });
+          }
+        });
       }
-      // Check password
-      bcrypt.compare(password, user.password).then((isMatch) => {
-        if (isMatch) {
-          resolve(user);
-        } else {
-          reject({ passwordincorrect: "Password incorrect" });
-        }
-      });
     });
   })
 }
 
 module.exports = {
   getUser,
+  getUsersList,
   registerUser,
   loginUser
 }
