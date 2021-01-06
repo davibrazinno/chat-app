@@ -61,7 +61,11 @@ const startStockQuotesWorker = socket => {
 
 const getStockQuote = async stock => {
     return new Promise((resolve, reject) => {
+        if (!stock || stock === '') {
+            return reject('Error: stock parameter is required')
+        }
         https.get(`https://stooq.com/q/l/?s=${stock}&f=sd2t2ohlcv&h&e=csv`, (resp) => {
+            const notFoundMessage = `${stock.toUpperCase()} quote not found`
             let data = '';
 
             // A chunk of data has been received.
@@ -71,20 +75,24 @@ const getStockQuote = async stock => {
 
             // The whole response has been received. Print out the result.
             resp.on('end', () => {
-                csv.parseString(data, { headers: true })
-                    .on('error', error => reject(error))
+                csv.parseString(data, {headers: true, discardUnmappedColumns: true})
+                    .on('error', error => {
+                        console.error(`Error parsing stock '${stock}' data: ${data}`, error)
+                        return resolve(notFoundMessage)
+                    })
                     .on('data', row => {
                         if (row.Close === 'N/D') {
-                            resolve(`${stock.toUpperCase()} quote not found`)
+                            return resolve(notFoundMessage)
                         } else {
                             const message = `${row.Symbol} quote is $${row.Close} per share`
-                            resolve(message)
+                            return resolve(message)
                         }
                     });
+
             });
 
         }).on("error", (err) => {
-            reject("Error: " + err.message);
+            return reject("Error: " + err.message);
         });
     })
 }
