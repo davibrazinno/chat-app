@@ -7,14 +7,16 @@ const {
     getConversations,
     getConversationsQuery,
     addConversation
-} = require('./messages.service')
+} = require('./messages.service');
+const passport = require("passport");
 
+const secureEndpoint = () => passport.authenticate('jwt', {session: false})
 
 // Token verification middleware
 router.use(jwtValidation);
 
 // Get global messages
-router.get('/global', async (req, res, next) => {
+router.get('/global', secureEndpoint(), async (req, res, next) => {
     try {
         const messages = await getGlobalMessages();
         res.send(messages);
@@ -24,21 +26,21 @@ router.get('/global', async (req, res, next) => {
 });
 
 // Post global message
-router.post('/global', async (req, res, next) => {
+router.post('/global', secureEndpoint(), async (req, res, next) => {
     const message = req.body.body
     try {
         const globalMessage = await saveGlobalMessage(message, req.userId)
 
         req.io.sockets.emit('messages', globalMessage.body);
 
-        res.status(201).json({ message: 'Success' });
+        res.status(201).json({message: 'Success'});
     } catch (err) {
         next(err)
     }
 });
 
 // Get conversations list
-router.get('/conversations', async (req, res, next) => {
+router.get('/conversations', secureEndpoint(), async (req, res, next) => {
     try {
         const conversations = await getConversations(req.userId)
         res.send(conversations);
@@ -50,7 +52,7 @@ router.get('/conversations', async (req, res, next) => {
 
 // Get messages from conversation
 // based on to & from
-router.get('/conversations/query', async (req, res, next) => {
+router.get('/conversations/query', secureEndpoint(), async (req, res, next) => {
     try {
         const messages = await getConversationsQuery(req.userId, req.query.userId)
         res.send(messages);
@@ -60,7 +62,7 @@ router.get('/conversations/query', async (req, res, next) => {
 });
 
 // Post private message
-router.post('/', async (req, res, next) => {
+router.post('/', secureEndpoint(), async (req, res, next) => {
     try {
         const response = await addConversation(req.userId, req.body.to, req.body.body)
         req.io.sockets.emit('messages', req.body.body);

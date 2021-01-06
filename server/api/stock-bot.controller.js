@@ -7,8 +7,12 @@ const rabbitmq = require('../utilities/rabbitmq')
 // Token verification middleware
 router.use(jwtValidation);
 
+const passport = require("passport");
+
+const secureEndpoint = () => passport.authenticate('jwt', {session: false})
+
 // Post stock-bot message
-router.post('/', async (req, res, next) => {
+router.post('/', secureEndpoint(), async (req, res, next) => {
     const queue = 'STOCK_QUOTES';
     const msg = {
         ...req.body,
@@ -23,7 +27,7 @@ router.post('/', async (req, res, next) => {
 });
 
 // Get stock-bot messages
-router.get('/', async (req, res, next) => {
+router.get('/', secureEndpoint(), async (req, res, next) => {
     try {
         const botMessages = await getStockBotMessages(req.userId)
         res.status(200).json(botMessages)
