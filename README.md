@@ -1,6 +1,6 @@
 # MERN: Full-stack Chat Application with Stock Market Bot
 
-This project implements a MERN Char App with a Stock Market Bot. The bot is called by typing `/stock=googl.us` command from any chat, where `googl.us` is the stock option, and returns a message in the same chat exclusively for the user who sent the request. The backend processes the bot requests asynchronously, each request is sent to a message broker (RabbitMQ) and when it's processed the backend send a message using Socket.IO in order to update the chat with the Stock Bot response.
+This is a Chat App with a Stock Market Bot included. The bot is called by typing `/stock=googl.us` command from any chat, where `googl.us` is the stock option. It returns a message in the same chat exclusively for the user who sent the request. The backend process the bot requests asynchronously, each request is sent to a message broker (RabbitMQ), when it's processed the backend send a message using Socket.IO to update the chat with the Stock Bot response.
 
 ### How to use
 
@@ -37,6 +37,7 @@ Install & Start the Dependencies:
 - Run: `npm start`
 - Test: `npm test` (no unit tests available)
 
+
 ### Features
 
 This application provides users with the following features
@@ -62,8 +63,15 @@ This application provides users with the following features
 ##### Register
 ![Register](https://i.imgur.com/AMkpl9C.png)
 
-### Known Limitations
 
-- Global: E2E test coverage
-- Backend: no unit test coverage for services, utilities, validation
-- Frontend: no unit test coverage
+### Known Limitations
+This project was developed as a 5 days challenge. Some paths were taken to deliver all the features stable in time. As future enhancements we have:
+
+- Support stock-bot visibility configuration (private or public); 
+- Support to include new bots;
+- Include E2E tests with Cypress;
+- Configure test coverage stats script and badges on README.md;
+- Increase test coverage for stock-bot controller;
+- Create unit tests for controllers messages and users;
+- Create unit tests for services, utilities, validation;
+- Create unit tests for the React components.
