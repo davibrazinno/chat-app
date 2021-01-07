@@ -7,7 +7,7 @@ const cors = require("cors");
 const users = require("./api/users.controller");
 const messages = require("./api/messages.controller");
 const stockBot = require("./api/stock-bot.controller");
-const {startStockQuotesWorker} = require('./api/stock-bot.service')
+const StockBotService = require('./api/stock-bot.service')
 
 const app = express();
 
@@ -59,7 +59,14 @@ app.use((err, req, res, next) => {
 })
 
 // Workers
-startStockQuotesWorker(io)
+function startWorkers() {
+    if (process.env.JEST_WORKER_ID !== undefined) {
+        console.log('Workers will not be automatically started while running unit tests')
+    } else {
+        return StockBotService.startStockQuotesWorker(io)
+    }
+}
+startWorkers()
 
 // Routes
 app.use("/api/users", users);

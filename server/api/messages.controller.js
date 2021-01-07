@@ -1,13 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {jwtValidation} = require('../utilities/jwt-utils')
-const {
-    getGlobalMessages,
-    saveGlobalMessage,
-    getConversations,
-    getConversationsQuery,
-    addConversation
-} = require('./messages.service');
+const MessagesService = require('./messages.service');
 const passport = require("passport");
 
 const secureEndpoint = () => passport.authenticate('jwt', {session: false})
@@ -18,7 +12,7 @@ router.use(jwtValidation);
 // Get global messages
 router.get('/global', secureEndpoint(), async (req, res, next) => {
     try {
-        const messages = await getGlobalMessages();
+        const messages = await MessagesService.getGlobalMessages();
         res.send(messages);
     } catch (err) {
         next(err)
@@ -29,7 +23,7 @@ router.get('/global', secureEndpoint(), async (req, res, next) => {
 router.post('/global', secureEndpoint(), async (req, res, next) => {
     const message = req.body.body
     try {
-        const globalMessage = await saveGlobalMessage(message, req.userId)
+        const globalMessage = await MessagesService.saveGlobalMessage(message, req.userId)
 
         req.io.sockets.emit('messages', globalMessage.body);
 
@@ -42,7 +36,7 @@ router.post('/global', secureEndpoint(), async (req, res, next) => {
 // Get conversations list
 router.get('/conversations', secureEndpoint(), async (req, res, next) => {
     try {
-        const conversations = await getConversations(req.userId)
+        const conversations = await MessagesService.getConversations(req.userId)
         res.send(conversations);
     } catch (err) {
         console.log(err);
@@ -54,7 +48,7 @@ router.get('/conversations', secureEndpoint(), async (req, res, next) => {
 // based on to & from
 router.get('/conversations/query', secureEndpoint(), async (req, res, next) => {
     try {
-        const messages = await getConversationsQuery(req.userId, req.query.userId)
+        const messages = await MessagesService.getConversationsQuery(req.userId, req.query.userId)
         res.send(messages);
     } catch (err) {
         next(err)
@@ -64,7 +58,7 @@ router.get('/conversations/query', secureEndpoint(), async (req, res, next) => {
 // Post private message
 router.post('/', secureEndpoint(), async (req, res, next) => {
     try {
-        const response = await addConversation(req.userId, req.body.to, req.body.body)
+        const response = await MessagesService.addConversation(req.userId, req.body.to, req.body.body)
         req.io.sockets.emit('messages', req.body.body);
         res.send(response)
     } catch (err) {
