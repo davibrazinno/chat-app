@@ -8,6 +8,7 @@ const users = require("./api/users.controller");
 const messages = require("./api/messages.controller");
 const stockBot = require("./api/stock-bot.controller");
 const StockBotService = require('./api/stock-bot.service')
+const {connect} = require('./utilities/rabbitmq')
 
 const app = express();
 
@@ -15,16 +16,16 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 const server = app.listen(port, () =>
-  console.log(`Server running on port ${port}`)
+    console.log(`Server running on port ${port}`)
 );
 
 const io = require("socket.io").listen(server);
 
 // Body Parser middleware to parse request bodies
 app.use(
-  bodyParser.urlencoded({
-    extended: false,
-  })
+    bodyParser.urlencoded({
+        extended: false,
+    })
 );
 app.use(bodyParser.json());
 
@@ -35,13 +36,13 @@ app.use(cors());
 const db = require("./config/keys").mongoURI;
 
 mongoose
-  .connect(db, {
-    useNewUrlParser: true,
-    useFindAndModify: false,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("MongoDB Successfully Connected"))
-  .catch((err) => console.log(err));
+    .connect(db, {
+        useNewUrlParser: true,
+        useFindAndModify: false,
+        useUnifiedTopology: true,
+    })
+    .then(() => console.log("MongoDB Successfully Connected"))
+    .catch((err) => console.log(err));
 
 // Passport middleware
 app.use(passport.initialize());
@@ -50,8 +51,8 @@ require("./config/passport")(passport);
 
 // Assign socket object to every request
 app.use((req, res, next) => {
-  req.io = io;
-  next();
+    req.io = io;
+    next();
 });
 
 app.use((err, req, res, next) => {
@@ -63,7 +64,9 @@ function startWorkers() {
     if (process.env.JEST_WORKER_ID !== undefined) {
         console.log('Workers will not be automatically started while running unit tests')
     } else {
-        return StockBotService.startStockQuotesWorker(io)
+        StockBotService.startStockQuotesWorker(io)
+            .then(() => console.log('Stock Bot Started!'))
+            .catch((err) => console.error(`ERROR: Stock Bot didn't start: ${err.message}`))
     }
 }
 startWorkers()

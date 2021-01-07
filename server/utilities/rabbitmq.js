@@ -1,36 +1,31 @@
 const {rabbitURI} = require('../config/keys')
 const ampq = require('amqplib')
 
-function connect(){
+async function connect() {
     return ampq.connect(rabbitURI)
-        .then(conn => conn.createChannel());
 }
 
-function createQueue(channel, queue){
-    return new Promise((resolve, reject) => {
-        try{
-            channel.assertQueue(queue, { durable: true });
-            resolve(channel);
-        }
-        catch(err){ reject(err) }
-    });
+async function createQueue(channel, queue) {
+    await channel.assertQueue(queue, {durable: true});
+    return channel
 }
 
-function sendToQueue(queue, message){
-    connect()
-        .then(channel => createQueue(channel, queue))
-        .then(channel => channel.sendToQueue(queue, Buffer.from(JSON.stringify(message))))
-        .catch(err => console.log(err))
+async function sendToQueue(queueName, message) {
+    const conn = await connect()
+    const channel = await conn.createChannel()
+    await createQueue(channel, queueName)
+    return channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)))
 }
 
-function consume(queue, callback){
-    connect()
-        .then(channel => createQueue(channel, queue))
-        .then(channel => channel.consume(queue, callback, { noAck: true }))
-        .catch(err => console.log(err));
+async function consume(queueName, callback) {
+    const conn = await connect()
+    const channel = await conn.createChannel()
+    await createQueue(channel, queueName)
+    await channel.consume(queueName, callback, {noAck: true})
 }
 
 module.exports = {
     sendToQueue,
-    consume
+    consume,
+    connect
 }

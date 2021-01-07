@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const https = require('https');
 const csv = require('@fast-csv/parse');
-const {consume} = require('../utilities/rabbitmq');
+const {consume, connect} = require('../utilities/rabbitmq');
 const BotMessage = require('../models/BotMessage');
 
 const getStockBotMessages = async (userId) => {
@@ -31,9 +31,28 @@ const getStockBotMessages = async (userId) => {
     })
 };
 
-const startStockQuotesWorker = socket => {
+const waitForConnection = async () => {
+    let attempts = 1
+    let connected = false;
+    const timeout = (ms) => {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    while(!connected) {
+        try {
+            await timeout(3000)
+            await connect()
+            connected = true
+        } catch (err) {
+            console.log(`Trying connection with RabbitMQ #${attempts++} - "${err.message}"`)
+        }
+    }
+    await timeout(1000)
+}
+
+const startStockQuotesWorker = async socket => {
+    await waitForConnection()
     const queue = 'STOCK_QUOTES'
-    consume(queue, async message => {
+    return consume(queue, async message => {
         const msg = JSON.parse(message.content.toString())
         const quote = await getStockQuote(msg.stock)
 
@@ -56,7 +75,6 @@ const startStockQuotesWorker = socket => {
             }
         })
     })
-    console.log("worker started");
 }
 
 const getStockQuote = async stock => {

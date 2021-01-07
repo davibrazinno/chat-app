@@ -1,14 +1,74 @@
-version: "2"
+version: '3.7'
+
 services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: chat-app-server
+    container_name: chat-app-node-server
+    volumes:
+      - ./server/:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "5000:5000"
+    restart: on-failure
+    depends_on:
+      - mongo
+      - rabbit
+    links:
+      - mongo
+      - rabbit
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-network
   mongo:
     image: mongo
-    expose:
-      - "27017"
+    volumes:
+      - data-volume:/data/db
     ports:
       - "27017:27017"
+    networks:
+      - app-network
   rabbit:
-    image: rabbitmq
-    expose:
-      - "5672"
+    image: rabbitmq:management
+    volumes:
+      - data-volume:/data/rabbit
     ports:
       - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:15672" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - app-network
+  client:
+    stdin_open: true
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    image: chat-app-client
+    container_name: chat-app-react-client
+    command: npm start
+    volumes:
+      - ./client/:/usr/app
+      - /usr/app/node_modules
+    depends_on:
+      - server
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  data-volume:
+  node_modules:
+  web-root:
+    driver: local

@@ -6,12 +6,14 @@ This project implements a MERN Char App with a Stock Market Bot. The bot is call
 
 Dependencies:
 1. MongoDB running on port 27017
-2. RabbitMQ running on port 6572
+2. RabbitMQ running on port 5672
 
-A Docker compose file is included for both dependencies, from the root dir run:
+The project is Dockerized, React Frontend, NodeJS Backend, and dependencies are included. To start all the containers run:
 ```
 docker-compose up
 ```
+
+Wait until the containers start, then access the app on http://localhost:3000/
 
 #### Backend (/server)
 
@@ -23,7 +25,7 @@ docker-compose up
 
 - Install: `npm install`
 - Run: `npm start`
-- Test: `npm test`
+- Test: `npm test` (no unit tests available)
 
 ### Features
 
@@ -50,3 +52,9 @@ This application provides users with the following features
 ##### Register
 ![Register](https://i.imgur.com/AMkpl9C.png)
 
+### Known Limitations
+
+- Incomplete Docker configuration...?
+- No E2E test coverage
+- Backend: no unit test coverage for services, utilities, validation
+- Frontend: no unit test coverage
