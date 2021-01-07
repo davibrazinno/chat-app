@@ -8,7 +8,7 @@ const users = require("./api/users.controller");
 const messages = require("./api/messages.controller");
 const stockBot = require("./api/stock-bot.controller");
 const StockBotService = require('./api/stock-bot.service')
-const {connect} = require('./utilities/rabbitmq')
+const {mongoUrl} = require('./config/config')
 
 const app = express();
 
@@ -32,11 +32,7 @@ app.use(bodyParser.json());
 // CORS middleware
 app.use(cors());
 
-// Database configuration
-const db = require("./config/keys").mongoURI;
-
-mongoose
-    .connect(db, {
+mongoose.connect(mongoUrl, {
         useNewUrlParser: true,
         useFindAndModify: false,
         useUnifiedTopology: true,

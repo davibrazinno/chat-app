@@ -1,8 +1,8 @@
-const {rabbitURI} = require('../config/keys')
+const {rabbitUrl} = require('../config/config')
 const ampq = require('amqplib')
 
 async function connect() {
-    return ampq.connect(rabbitURI)
+    return ampq.connect(rabbitUrl)
 }
 
 async function createQueue(channel, queue) {

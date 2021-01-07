@@ -4,24 +4,34 @@ This project implements a MERN Char App with a Stock Market Bot. The bot is call
 
 ### How to use
 
-Dependencies:
-1. MongoDB running on port 27017
-2. RabbitMQ running on port 5672
+#### Docker way
 
-The project is Dockerized, React Frontend, NodeJS Backend, and dependencies are included. To start all the containers run:
+This project is Dockerized, React Frontend, NodeJS Backend, MongoDB, and RabbitMQ are included.
+
+![Docker Containers](https://user-images.githubusercontent.com/76712257/103848560-6b87d780-5081-11eb-8026-c616cacc4db4.png)
+
+To start all the containers run:
 ```
 docker-compose up
 ```
 
 Wait until the containers start, then access the app on http://localhost:3000/
 
-#### Backend (/server)
+#### Manual way
+
+###### Dependencies
+
+Install & Start the Dependencies:
+1. MongoDB should be running on port 27017
+2. RabbitMQ should be running on port 5672
+
+###### Backend (/server)
 
 - Install: `npm install`
 - Run: `npm run server`
 - Test: `npm test`
 
-#### Frontend (/client)
+###### Frontend (/client)
 
 - Install: `npm install`
 - Run: `npm start`

@@ -19,8 +19,9 @@ services:
     links:
       - mongo
       - rabbit
+    env_file: .env
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=docker
     networks:
       - app-network
   mongo:
