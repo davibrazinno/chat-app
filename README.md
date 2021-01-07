@@ -64,7 +64,6 @@ This application provides users with the following features
 
 ### Known Limitations
 
-- Incomplete Docker configuration...?
-- No E2E test coverage
+- Global: E2E test coverage
 - Backend: no unit test coverage for services, utilities, validation
 - Frontend: no unit test coverage
